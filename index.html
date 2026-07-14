@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sovereign AI Context Harness & Diff Stager</title>
+    <title>Sovereign AI Context Harness & Private Workspace</title>
     <!-- Include ONNX Runtime Web and Transformers.js libraries via CDN -->
     <script type="module">
         import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
@@ -41,6 +41,8 @@
             padding-bottom: 16px;
             border-bottom: 1px solid var(--border);
             margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         h1 { font-size: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
@@ -162,6 +164,8 @@
         button.info-btn:hover { background-color: var(--info); color: white; }
         button.danger { background-color: transparent; border-color: var(--alert); color: var(--alert); }
         button.danger:hover { background-color: var(--alert); color: white; }
+        button.download-btn { background-color: #388bfd; border-color: rgba(240,246,252,0.1); }
+        button.download-btn:hover { background-color: #58a6ff; }
 
         .log-container {
             border: 1px solid var(--border);
@@ -215,6 +219,22 @@
         .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #8b949e; display: inline-block; }
         .status-active { background: #3fb950; animation: pulse 2s infinite; }
 
+        /* Mode Switcher Banner Styles */
+        .mode-banner {
+            background: linear-gradient(90deg, #1f1b2d 0%, #161b22 100%);
+            border: 1px solid #7928ca;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .tech-only { display: flex; flex-direction: column; gap: 12px; }
+
         @keyframes pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.7); }
             70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(63, 185, 80, 0); }
@@ -225,12 +245,27 @@
 <body>
 
     <header>
-        <h1>🛡️ Sovereign Context Harness <span class="badge">v1.2.0</span></h1>
-        <div style="display: flex; gap: 8px; align-items: center;">
+        <h1>🛡️ Sovereign AI Hub <span class="badge">v1.3.0</span></h1>
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <button class="download-btn" onclick="downloadSingleFileOffice()">💾 Download Private AI Office</button>
             <button class="secondary info-btn" onclick="toggleHelpDrawer()">📖 Quick Start Guide</button>
             <span class="badge" id="runtime-badge">Local/Air-Gapped Mode</span>
         </div>
     </header>
+
+    <!-- WORKSPACE AUDIENCE SELECTOR -->
+    <div class="mode-banner">
+        <div>
+            <strong style="color: #d3b1f9; display: flex; align-items: center; gap: 6px;">✨ Choose Your Workspace Experience:</strong>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">Switch interface styles between everyday absolute privacy helpers and rigorous technical context engineering boards.</p>
+        </div>
+        <div>
+            <select id="audience-toggle" onchange="toggleAudienceView()" style="border-color: #7928ca; font-weight: bold; padding: 6px 12px;">
+                <option value="everyday">🔒 Everyday Privacy Mode (Simple / Non-Technical)</option>
+                <option value="technical">🛠️ Tactical Dev Mode (Advanced Context Harness)</option>
+            </select>
+        </div>
+    </div>
 
     <!-- INTERACTIVE DOCUMENTATION DRAWER -->
     <div id="help-drawer" class="help-drawer">
@@ -267,25 +302,34 @@
         
         <!-- LEFT PANEL: CONFIGURATION & CONTEXT PRODUCTION -->
         <div class="panel">
-            <h2>⚙️ 1. Engine Configuration</h2>
+            <h2 id="panel-left-title">⚙️ 1. Engine Configuration</h2>
+            
             <div class="config-row">
                 <div class="form-group">
-                    <label for="endpoint-type">Runtime Target</label>
+                    <label for="endpoint-type">Runtime Target (Where your AI calculates)</label>
                     <select id="endpoint-type" onchange="toggleEndpointView()">
                         <option value="ollama">Ollama (Local Daemon)</option>
-                        <option value="wasm">ONNX WebAssembly (Pure Browser CPU Offline)</option>
+                        <option value="wasm" selected>ONNX WebAssembly (Pure Browser CPU Offline)</option>
                         <option value="cloudflare">Cloudflare Workers AI (Edge Cluster)</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="model-selector">Target Model Block</label>
+                    <label for="model-selector">Target Model Block (Size footprint)</label>
                     <select id="model-selector">
-                        <!-- Ollama defaults here first -->
-                        <option value="llama3:latest">llama3:latest (Default Local)</option>
-                        <option value="phi3:latest">phi3:latest</option>
-                        <option value="qwen2.5:0.5b">qwen2.5:0.5b</option>
+                        <!-- Initialized via toggleEndpointView -->
                     </select>
                 </div>
+            </div>
+
+            <!-- EVERYDAY NON-TECH USER UTILITY PRESETS -->
+            <div class="form-group" id="everyday-presets-container">
+                <label for="preset-selector" style="color: #58a6ff; font-weight: bold;">📝 Choose a Secure Private Tool Template</label>
+                <select id="preset-selector" onchange="applyEverydayPreset()" style="border-color: #58a6ff;">
+                    <option value="fact-check">🛡️ Grounded Fact-Checker Shield (Verify Truth & Kill AI Hallucinations)</option>
+                    <option value="contract">📝 Leakage-Free Document/Contract Auditor (100% Confidential)</option>
+                    <option value="journal">🔐 Encrypted-Tab Personal Journal Reflector (No Corporate Training Tracks)</option>
+                    <option value="expense">📊 Zero-Cloud Private Financial Expense Analyzer</option>
+                </select>
             </div>
 
             <div id="cf-credentials" class="config-row" style="display: none;">
@@ -301,52 +345,58 @@
 
             <hr style="border: 0; border-top: 1px solid var(--border);">
 
-            <h2>🔏 2. Active Prompt & Staged Token Payload</h2>
-            <div class="form-group">
+            <div class="form-group tech-only" id="system-harness-wrapper">
                 <label>System Harness Base Rules (Anti-Hallucination Matrix)</label>
                 <textarea id="system-harness" readonly style="font-size: 0.8rem; background: var(--bg-main); opacity: 0.85;"></textarea>
             </div>
 
             <div class="form-group">
-                <label for="user-query">Isolation Zone Query Input</label>
-                <textarea id="user-query" placeholder="Type or paste your complex software constraint, documentation specs, or raw data vectors here..."></textarea>
+                <label id="input-label-text" for="user-query">Isolation Zone Query Input</label>
+                <textarea id="user-query" placeholder="Type or paste your data here..."></textarea>
             </div>
 
             <div class="config-row">
-                <button onclick="executeInference()" style="flex: 2;">⚡ Stage & Run Inference</button>
-                <button class="secondary" onclick="exportHarnessMarkdown()" style="flex: 1;">📋 Copy Payload</button>
+                <button onclick="executeInference()" style="flex: 2; font-size: 1.05rem; font-weight: bold;">⚡ Secure Run / Analyze</button>
+                <button class="secondary tech-only" id="copy-payload-btn" onclick="exportHarnessMarkdown()" style="flex: 1;">📋 Copy Payload</button>
             </div>
         </div>
 
         <!-- RIGHT PANEL: FEEDBACK LOOPS, EVALS & STAGED DIFFS -->
         <div class="panel">
-            <h2>📋 3. Sovereign Runtime Output</h2>
+            <h2 id="panel-right-title">📋 3. Sovereign Runtime Output</h2>
             <div class="form-group">
                 <textarea id="output-view" readonly style="min-height: 180px; background: var(--bg-main); border-color: #58a6ff;" placeholder="Awaiting execution pipeline frame..."></textarea>
             </div>
 
-            <h2>🔄 4. Real-time Telemetry Loop & Corrections</h2>
-            <p style="font-size:0.8rem; color: var(--text-muted);">If the model failed structural constraints or hallucinated variables, capture the adjustment below to adjust contextual parameters dynamically without physical model fine-tuning.</p>
-            
-            <div class="form-group">
-                <label for="correction-input">Correction / Rule Update Directive</label>
-                <input type="text" id="correction-input" placeholder="e.g., Output absolute markdown lists only. Ban unverified metrics.">
-            </div>
-            
-            <div class="config-row">
-                <button class="secondary" onclick="commitTelemetryTrace()">💾 Inject Correction Vector</button>
-                <button class="danger" onclick="clearTelemetry()">Clear Traces</button>
-            </div>
+            <div class="tech-only" id="telemetry-loop-wrapper">
+                <h2>🔄 4. Real-time Telemetry Loop & Corrections</h2>
+                <p style="font-size:0.8rem; color: var(--text-muted);">If the model failed structural constraints or hallucinated variables, capture the adjustment below to adjust contextual parameters dynamically without physical model fine-tuning.</p>
+                
+                <div class="form-group" style="margin-top: 8px;">
+                    <label for="correction-input">Correction / Rule Update Directive</label>
+                    <input type="text" id="correction-input" placeholder="e.g., Output absolute markdown lists only. Ban unverified metrics.">
+                </div>
+                
+                <div class="config-row" style="margin-top: 8px;">
+                    <button class="secondary" onclick="commitTelemetryTrace()">💾 Inject Correction Vector</button>
+                    <button class="danger" onclick="clearTelemetry()">Clear Traces</button>
+                </div>
 
-            <label>Active Local Telemetry Bank (Dynamic Few-Shot Memory)</label>
-            <div class="log-container" id="telemetry-log">
-                <!-- Injected traces sit here -->
+                <label style="margin-top: 8px; display: block;">Active Local Telemetry Bank (Dynamic Few-Shot Memory)</label>
+                <div class="log-container" id="telemetry-log">
+                    <!-- Injected traces sit here -->
+                </div>
+            </div>
+            
+            <!-- Simple Consumer Helper Text (Shows only in Everyday Mode) -->
+            <div id="everyday-reassurance-box" style="background: rgba(35, 134, 54, 0.1); border: 1px dashed var(--accent); padding: 12px; border-radius: 6px; font-size: 0.85rem;">
+                <strong>🔒 Absolute Privacy Lock Verified:</strong> What you type here stays inside this specific browser page tab. Even if you don't use a local computing connection, our built-in ONNX system processes data inside your memory. Feel free to unplug your router right now to verify total air-gapped security!
             </div>
         </div>
     </div>
 
     <!-- BOTTOM ROW: REAL-TIME TOKENS DIFF ENGINE -->
-    <div class="panel" style="margin-top: 16px;">
+    <div class="panel tech-only" id="diff-panel-wrapper" style="margin-top: 16px;">
         <h2>⚖️ 5. Token-Conscious Prompt Stager (Output Shift Tracking)</h2>
         <div id="diff-view" class="diff-container">
             <div class="diff-box" style="color: var(--text-muted); text-align: center;">No execution traces found. Fire a staged inference execution frame to observe alignment shift variables.</div>
@@ -362,7 +412,31 @@
     </div>
 
     <script>
-        const systemHarnessTemplate = `# SOVEREIGN AI CONTEXT HARNESS (V1.2.0)\n## PURPOSE: ANTI-HALLUCINATION & STRICT BOUNDARY ENFORCEMENT\n\n1. CORE OPERATIONAL MANDATES\n- Source Restraints: You may ONLY generate responses based explicitly on data provided in user query isolation or active telemetry.\n- Missing Information Protocol: If unknown, output '[ERROR: SOURCE_MISSING] Context lacks explicit data.' Do not guess.\n- Confident Index: Prepend every computational delivery block with a strict accuracy reading -> [CI: 0.0 to 1.0]\n\n2. RUNTIME CONSTRAINTS\n- Frame executions: Break outputs down into distinct sequential verification frames.\n- Arithmetic: Draw markdown tables comparing items raw before final mathematical returns.`;
+        const systemHarnessTemplate = `# SOVEREIGN AI CONTEXT HARNESS (V1.3.0)\n## PURPOSE: ANTI-HALLUCINATION & STRICT BOUNDARY ENFORCEMENT\n\n1. CORE OPERATIONAL MANDATES\n- Source Restraints: You may ONLY generate responses based explicitly on data provided in user query isolation or active telemetry.\n- Missing Information Protocol: If unknown, output '[ERROR: SOURCE_MISSING] Context lacks explicit data.' Do not guess.\n- Confident Index: Prepend every computational delivery block with a strict accuracy reading -> [CI: 0.0 to 1.0]\n\n2. RUNTIME CONSTRAINTS\n- Frame executions: Break outputs down into distinct sequential verification frames.\n- Arithmetic: Draw markdown tables comparing items raw before final mathematical returns.`;
+
+        // Pre-baked everyday text options
+        const presets = {
+            'fact-check': {
+                label: "Paste the article or claim you want to verify:",
+                placeholder: "[Paste questionable article text here]\n\nQuestion: Did the author provide verified research proofs backing up the revenue projections?",
+                harness: systemHarnessTemplate + "\n- Task: Fact-Check. Explicitly match items against context. Flag unverified statements or assumptions."
+            },
+            'contract': {
+                label: "Paste your private document or contract terms here:",
+                placeholder: "[Paste confidential contract paragraphs here]\n\nQuestion: Highlight potential auto-renewal traps, hidden cancellation fees, or liabilities.",
+                harness: systemHarnessTemplate + "\n- Task: Contract Audit. Pinpoint liability loops or cost vulnerabilities without speculation."
+            },
+            'journal': {
+                label: "Write or paste your private thoughts / reflective entry:",
+                placeholder: "Today was highly challenging. I felt overwhelmed handling the operations transition shift...",
+                harness: systemHarnessTemplate + "\n- Task: Private Reflection Coach. Summarize core underlying operational stressors and provide 3 grounding solutions based only on personal journal principles."
+            },
+            'expense': {
+                label: "Paste your raw text line-item financial expenses:",
+                placeholder: "Uber Ride - $54.20\nCoffee - $6.50\nServer Serverless Node Fee - $120.00\nLunch Client Meeting - $88.40",
+                harness: systemHarnessTemplate + "\n- Task: Financial Categorization Table. Map expenses into separate Business vs Personal groups. Output total additions mathematically verified."
+            }
+        };
 
         let telemetryTraces = [];
         let generatorPipeline = null; 
@@ -391,6 +465,7 @@
             document.getElementById('system-harness').value = systemHarnessTemplate;
             renderTelemetry();
             toggleEndpointView(); 
+            toggleAudienceView(); // Mount view parameters based on default preset
         };
 
         function toggleHelpDrawer() {
@@ -404,7 +479,6 @@
             const selector = document.getElementById('model-selector');
             const badge = document.getElementById('runtime-badge');
 
-            // Re-populate the selection dropdown based on selected target architecture
             selector.innerHTML = '';
             modelOptions[type].forEach(opt => {
                 const el = document.createElement('option');
@@ -428,6 +502,55 @@
             }
         }
 
+        function toggleAudienceView() {
+            const audience = document.getElementById('audience-toggle').value;
+            const techWrappers = document.querySelectorAll('.tech-only');
+            const presetsBox = document.getElementById('everyday-presets-container');
+            const reassuranceBox = document.getElementById('everyday-reassurance-box');
+            
+            const pLeftTitle = document.getElementById('panel-left-title');
+            const pRightTitle = document.getElementById('panel-right-title');
+
+            if(audience === 'everyday') {
+                techWrappers.forEach(el => el.style.display = 'none');
+                presetsBox.style.display = 'flex';
+                reassuranceBox.style.display = 'block';
+                pLeftTitle.innerText = "🔒 1. Secure Input Workspace";
+                pRightTitle.innerText = "✨ 2. Insulated Analysis Results";
+                applyEverydayPreset();
+            } else {
+                techWrappers.forEach(el => el.style.display = (el.tagName === 'DIV' || el.classList.contains('config-row')) ? 'flex' : 'block');
+                presetsBox.style.display = 'none';
+                reassuranceBox.style.display = 'none';
+                pLeftTitle.innerText = "⚙️ 1. Engine Configuration";
+                pRightTitle.innerText = "📋 3. Sovereign Runtime Output";
+                document.getElementById('system-harness').value = systemHarnessTemplate;
+                document.getElementById('input-label-text').innerText = "Isolation Zone Query Input";
+            }
+        }
+
+        function applyEverydayPreset() {
+            const presetKey = document.getElementById('preset-selector').value;
+            const data = presets[presetKey];
+            if(!data) return;
+
+            document.getElementById('input-label-text').innerText = data.label;
+            document.getElementById('user-query').placeholder = data.placeholder;
+            document.getElementById('system-harness').value = data.harness;
+        }
+
+        function downloadSingleFileOffice() {
+            const rawHtml = document.documentElement.outerHTML;
+            const blob = new Blob([rawHtml], { type: 'text/html' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'Sovereign_Private_AI_Office.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            updateStatus("Private Single-File AI Office downloaded directly to local drive!", true);
+        }
+
         function generateFullPayload() {
             let traceBlock = "\n\n## 3. ACTIVE TELEMETRY TRACES (LOCAL FEEDBACK LOOP)\n";
             if (telemetryTraces.length === 0) {
@@ -438,7 +561,7 @@
                 });
             }
             const queryIsolation = `\n\n<!-- START SOVEREIGN ISOLATION ZONE -->\n[USER_QUERY_START]\n${document.getElementById('user-query').value}\n[USER_QUERY_END]\n<!-- END SOVEREIGN ISOLATION ZONE -->`;
-            return systemHarnessTemplate + traceBlock + queryIsolation;
+            return document.getElementById('system-harness').value + traceBlock + queryIsolation;
         }
 
         function exportHarnessMarkdown() {
@@ -511,7 +634,6 @@
                     
                     outputView.value = `Compiling WASM thread allocations... Loading ${modelName} weights into tab cache (First run may take a few moments)...\\n`;
                     
-                    // Re-initialize only if the user changed the target model footprint selection
                     if (!generatorPipeline || cachedModelName !== modelName) {
                         window.transformers.env.allowLocalModels = false;
                         generatorPipeline = await window.transformers.pipeline('text-generation', modelName);
