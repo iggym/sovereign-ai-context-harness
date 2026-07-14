@@ -1,6 +1,6 @@
 # 🛡️ Sovereign-Harness-SPA
 
-> **Run mission-critical, air-gapped, zero-leakage LLM orchestration straight out of a single HTML file—now running 100% offline in your browser using pure WebAssembly!** 🚀✨
+> **Run mission-critical, air-gapped, zero-leakage LLM orchestration straight out of a single HTML file—now running 100% offline in your browser using customizable, multi-tier WebAssembly models!** 🚀✨
 
 Welcome to the future of decentralized, private, and zero-overhead AI development! 🌐
 
@@ -49,8 +49,14 @@ When handling ultra-sensitive data or proprietary source code, plugging into gen
 
 * **🔌 Triple-Engine Runtime Routing:** 
   1. **Ollama Mode:** Interface seamlessly with your local background daemon on port `11434` to run powerful models like Llama 3 or DeepSeek entirely on your local machine.
-  2. **ONNX WebAssembly Mode (New!):** Compiles thread-isolated models directly on your **CPU inside the browser tab**. **Runs 100% offline with zero internet connection required after the initial model weights load!** 🚀
+  2. **ONNX WebAssembly Mode (Multi-Tier Support!):** Compiles thread-isolated models directly on your **CPU inside the browser tab**. **Runs 100% offline with zero internet connection required after the initial model weights load!** 🚀
   3. **Cloudflare Workers AI Mode:** Securely distribute high-compute loads to global edge serverless micro-clusters when you want fast mobile execution without running down your phone's battery.
+* **📦 Dynamic Browser-Native Footprints:** Choose your target compute engine directly via the UI:
+  * **LaMini-GPT-124M (~250MB):** Blazing fast instruction-following, optimized for mobile phone/tablet CPUs.
+  * **GPT-2 Base 124M (~240MB):** Legacy baseline for pure local processing stability.
+  * **Qwen1.5 0.5B Chat (~350MB):** Perfect balance of structured markdown parsing and minimal file sizes.
+  * **Qwen3 0.6B ONNX (~500MB):** Upgraded logical reasoning matrix.
+  * **Llama 3.2 1B Instruct (~900MB):** Deep semantic comprehension for modern processing cores.
 * **🧠 Anti-Hallucination Guardrails:** Built-in Markdown constraints that structurally command the LLM to output a hard **Confidence Index [CI]** and drop execution cleanly rather than guess or invent variables.
 * **⚖️ Token-Conscious Prompt Stager:** A visual workspace differential viewer that tracks text and structural changes across execution frames so you can audit exactly how your adjustments reshape the AI's output.
 * **🚀 Blazing Rapid Deploys:** Ideate, modify, and deploy an entirely private developer environment to production in under 30 minutes.
