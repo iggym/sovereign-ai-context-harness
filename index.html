@@ -14,6 +14,7 @@
             --text-muted: #8b949e;
             --accent: #238636;
             --accent-hover: #2ea043;
+            --info: #388bfd;
             --alert: #da3633;
             --font-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
         }
@@ -38,7 +39,7 @@
         }
 
         h1 { font-size: 1.25rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        h2 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; color: var(--text-main); }
+        h2 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; color: var(--text-main); display: flex; align-items: center; gap: 6px;}
         
         .badge {
             background: #21262d;
@@ -56,7 +57,7 @@
             gap: 16px;
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 1024px) {
             .grid-layout { grid-template-columns: 1fr 1fr; }
         }
 
@@ -69,6 +70,42 @@
             flex-direction: column;
             gap: 12px;
         }
+
+        /* Help Drawer Styling */
+        .help-drawer {
+            background: rgba(56, 139, 253, 0.05);
+            border: 1px solid var(--info);
+            border-radius: 6px;
+            padding: 0 16px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0, 1, 0, 1);
+            margin-bottom: 16px;
+        }
+        .help-drawer.open {
+            max-height: 2000px; /* high number to allow expansion */
+            padding: 16px;
+            transition: all 0.5s ease-in-out;
+            margin-bottom: 16px;
+        }
+        .help-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            font-size: 0.88rem;
+        }
+        @media (min-width: 768px) {
+            .help-grid { grid-template-columns: 1fr 1fr 1fr; }
+        }
+        .help-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+        }
+        .help-card h3 { font-size: 0.95rem; margin-bottom: 6px; color: var(--info); }
+        .help-card ol, .help-card ul { padding-left: 20px; margin-top: 4px; }
+        .help-card li { margin-bottom: 4px; }
 
         .config-row {
             display: flex;
@@ -108,11 +145,17 @@
             font-weight: 500;
             cursor: pointer;
             transition: background 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         button:hover { background-color: var(--accent-hover); }
         button.secondary { background-color: #21262d; border-color: var(--border); color: var(--text-main); }
         button.secondary:hover { background-color: #30363d; }
+        button.info-btn { background-color: transparent; border-color: var(--info); color: var(--info); }
+        button.info-btn:hover { background-color: var(--info); color: white; }
         button.danger { background-color: transparent; border-color: var(--alert); color: var(--alert); }
         button.danger:hover { background-color: var(--alert); color: white; }
 
@@ -179,20 +222,51 @@
 
     <header>
         <h1>🛡️ Sovereign Context Harness <span class="badge">v1.0.0</span></h1>
-        <span class="badge" id="runtime-badge">Local/Air-Gapped Mode</span>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="secondary info-btn" onclick="toggleHelpDrawer()">📖 Quick Start Guide</button>
+            <span class="badge" id="runtime-badge">Local/Air-Gapped Mode</span>
+        </div>
     </header>
+
+    <div id="help-drawer" class="help-drawer">
+        <h2 style="color: var(--info); margin-bottom: 12px;">💡 How to use the Sovereign AI Context Engine</h2>
+        <div class="help-grid">
+            <div class="help-card">
+                <h3>1. Select Your Infrastructure Target</h3>
+                <p>Choose your execution boundary:</p>
+                <ul>
+                    <li><strong>Ollama (Default):</strong> Routes inputs to an air-gapped server engine running on your machine at port <code>11434</code>. Excellent for strict offline constraints.</li>
+                    <li><strong>Cloudflare Workers:</strong> Offloads computing securely onto edge micro-clusters using global serverless nodes. *Requires Account ID & Token inputs.*</li>
+                </ul>
+            </div>
+            <div class="help-card">
+                <h3>2. Stage Inputs & Combat Hallucinations</h3>
+                <p>The system automatically sandwiches your query inside an <strong>Isolation Zone Layer</strong>. The pre-loaded system boundaries force the model to compute a mandatory <em>Confidence Index (CI)</em> and restrict it from making up missing parameter data.</p>
+            </div>
+            <div class="help-card">
+                <h3>3. Apply Dynamic Local Feedback</h3>
+                <ol>
+                    <li>Review the model's generated response block.</li>
+                    <li>If it makes structural assumptions or fails formatting, type the exact correction directive inside the <strong>Telemetry Input field</strong>.</li>
+                    <li>Click <strong>Inject Correction Vector</strong>. The system will loop that telemetry rule instantly into your next inference sequence without needing to retrain model weights!</li>
+                </ol>
+            </div>
+        </div>
+        <div style="text-align: right; margin-top: 12px;">
+            <button class="secondary btn-sm" onclick="toggleHelpDrawer()">Got it, Collapse Workspace Guide</button>
+        </div>
+    </div>
 
     <div class="grid-layout">
         
-        <!-- LEFT PANEL: CONFIGURATION & CONTEXT PRODUCTION -->
         <div class="panel">
-            <h2>1. Engine Configuration</h2>
+            <h2>⚙️ 1. Engine Configuration</h2>
             <div class="config-row">
                 <div class="form-group">
                     <label for="endpoint-type">Runtime Target</label>
                     <select id="endpoint-type" onchange="toggleEndpointView()">
-                        <option value="ollama">Ollama (Local / WebGPU Proxy)</option>
-                        <option value="cloudflare">Cloudflare Workers AI (Edge)</option>
+                        <option value="ollama">Ollama (Local Daemon)</option>
+                        <option value="cloudflare">Cloudflare Workers AI (Edge Cluster)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -214,15 +288,15 @@
 
             <hr style="border: 0; border-top: 1px solid var(--border);">
 
-            <h2>2. Active Prompt & Staged Token Payload</h2>
+            <h2>🔏 2. Active Prompt & Staged Token Payload</h2>
             <div class="form-group">
                 <label>System Harness Base Rules (Anti-Hallucination Matrix)</label>
                 <textarea id="system-harness" readonly style="font-size: 0.8rem; background: var(--bg-main); opacity: 0.85;"></textarea>
             </div>
 
             <div class="form-group">
-                <label for="user-query">Isolation Zone Query input</label>
-                <textarea id="user-query" placeholder="Type or paste your complex requirement or code base constraint here..."></textarea>
+                <label for="user-query">Isolation Zone Query Input</label>
+                <textarea id="user-query" placeholder="Type or paste your complex software constraint, documentation specs, or raw data vectors here..."></textarea>
             </div>
 
             <div class="config-row">
@@ -231,19 +305,18 @@
             </div>
         </div>
 
-        <!-- RIGHT PANEL: FEEDBACK LOOPS, EVALS & STAGED DIFFS -->
         <div class="panel">
-            <h2>3. Sovereign Runtime Output</h2>
+            <h2>📋 3. Sovereign Runtime Output</h2>
             <div class="form-group">
                 <textarea id="output-view" readonly style="min-height: 180px; background: var(--bg-main); border-color: #58a6ff;" placeholder="Awaiting execution pipeline frame..."></textarea>
             </div>
 
-            <h2>4. Real-time Telemetry Loop & Corrections</h2>
-            <p style="font-size:0.8rem; color: var(--text-muted);">If the model failed boundaries or hallucinated parameters, document the shift below to actively dynamically patch runtime logic weights without re-training.</p>
+            <h2>🔄 4. Real-time Telemetry Loop & Corrections</h2>
+            <p style="font-size:0.8rem; color: var(--text-muted);">If the model failed structural constraints or hallucinated variables, capture the adjustment below to adjust contextual parameters dynamically without physical model fine-tuning.</p>
             
             <div class="form-group">
                 <label for="correction-input">Correction / Rule Update Directive</label>
-                <input type="text" id="correction-input" placeholder="e.g., Ban rich layouts. Linear lists blocks only.">
+                <input type="text" id="correction-input" placeholder="e.g., Output absolute markdown lists only. Ban unverified metrics.">
             </div>
             
             <div class="config-row">
@@ -253,16 +326,14 @@
 
             <label>Active Local Telemetry Bank (Dynamic Few-Shot Memory)</label>
             <div class="log-container" id="telemetry-log">
-                <!-- Injected traces sit here -->
-            </div>
+                </div>
         </div>
     </div>
 
-    <!-- BOTOM ROW: REAL-TIME TOKENS DIFF ENGINE -->
     <div class="panel" style="margin-top: 16px;">
-        <h2>5. Token-Conscious Prompt Stager (Output Shift Tracking)</h2>
+        <h2>⚖️ 5. Token-Conscious Prompt Stager (Output Shift Tracking)</h2>
         <div id="diff-view" class="diff-container">
-            <div class="diff-box" style="color: var(--text-muted); text-align: center;">No execution traces found. Fire a staged inference execution frame to observe strict logic modifications.</div>
+            <div class="diff-box" style="color: var(--text-muted); text-align: center;">No execution traces found. Fire a staged inference execution frame to observe alignment shift variables.</div>
         </div>
     </div>
 
@@ -287,6 +358,11 @@
             document.getElementById('system-harness').value = systemHarnessTemplate;
             renderTelemetry();
         };
+
+        function toggleHelpDrawer() {
+            const drawer = document.getElementById('help-drawer');
+            drawer.classList.toggle('open');
+        }
 
         function toggleEndpointView() {
             const type = document.getElementById('endpoint-type').value;
@@ -317,7 +393,7 @@
                 });
             }
 
-            const queryIsolation = `\n\n<!-- START SOVEREIGN ISOLATION ZONE -->\n[USER_QUERY_START]\n${document.getElementById('user-query').value}\n[USER_QUERY_END]\n<!-- END SOVEREIGN ISOLATION ZONE -->`;
+            const queryIsolation = `\n\n\n[USER_QUERY_START]\n${document.getElementById('user-query').value}\n[USER_QUERY_END]\n`;
             
             return systemHarnessTemplate + traceBlock + queryIsolation;
         }
@@ -377,7 +453,6 @@
             }
         }
 
-        // Inference Orchestration Pipeline Engine
         async function executeInference() {
             const endpointType = document.getElementById('endpoint-type').value;
             const modelName = document.getElementById('model-name').value;
@@ -391,7 +466,6 @@
 
             try {
                 if (endpointType === 'ollama') {
-                    // Local Ollama routing scheme target
                     const response = await fetch('http://localhost:11434/api/generate', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -399,7 +473,7 @@
                             model: modelName,
                             prompt: fullPayload,
                             stream: false,
-                            options: { temperature: 0.0 } // Set to absolute 0 to minimize hallucinations
+                            options: { temperature: 0.0 } 
                         })
                     });
                     
@@ -408,7 +482,6 @@
                     renderOutputFrame(data.response, previousOutput);
 
                 } else if (endpointType === 'cloudflare') {
-                    // Cloudflare Edge AI implementation target
                     const accountId = document.getElementById('cf-id').value;
                     const token = document.getElementById('cf-token').value;
 
@@ -435,7 +508,6 @@
                     renderOutputFrame(data.result.response, previousOutput);
                 }
             } catch (err) {
-                // If local/edge engines are missing during off-grid development, gracefully drop to simulation matrix fallback
                 outputView.value = `[ENGINE_FALLBACK_SIMULATION_FRAME]\n### [RUN_EXECUTION_STATUS: SIMULATED_SUCCESSFUL]\n* **Confidence Index:** [CI: 0.95]\n\n#### [LOGICAL DECONSTRUCTION]\n1. System dropped cleanly into isolated fallback container layer because external engine execution returned: "${err.message}".\n2. Parsed prompt context payload contains ${telemetryTraces.length} strict active parameter adjustments.\n\n#### [COMPUTED ANSWER]\nSovereign isolation workspace safely verified on runtime device. To route directly to real LLM weights, instantiate Ollama or populate Cloudflare edge parameters. Context payload generation metrics remain uncompromised inside browser memory bounds.`;
                 renderDiff(previousOutput, outputView.value);
                 updateStatus("Execution compiled using client-side fallback matrix.", true);
@@ -448,7 +520,6 @@
             updateStatus("Inference complete. Context constraints safely executed.", true);
         }
 
-        // Token-Conscious Prompt Stager / Output Diff Component Logic
         function renderDiff(oldText, newText) {
             const diffView = document.getElementById('diff-view');
             if (!oldText) {
