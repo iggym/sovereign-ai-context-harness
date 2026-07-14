@@ -1,12 +1,14 @@
-# 🛡️ Sovereign-Harness-SPA
+# 🛡️ Sovereign AI Hub & Context Harness (SPA)
 
-> **Run mission-critical, air-gapped, zero-leakage LLM orchestration straight out of a single HTML file—now running 100% offline in your browser using customizable, multi-tier WebAssembly models!** 🚀✨
+> **Run mission-critical, air-gapped, zero-leakage LLM orchestration straight out of a single HTML file. Swap instantly between Hardcore Dev Mode and an ultra-friendly Everyday Privacy Office!** 🚀✨
 
 Welcome to the future of decentralized, private, and zero-overhead AI development! 🌐
 
-Inspired by the advanced architectural principles of enterprise-grade, high-security data engineering—such as the tactical frameworks utilized by **Palantir and NVIDIA** for sovereign, open-weight model deployments—this project is designed to put total data control back into the hands of developers. We have stripped away the complex server setups, the costly operational bills, and the data-privacy anxieties to deliver a fully operational AI workshop contained inside **one single portable file**.
+Inspired by the advanced architectural principles of enterprise-grade, high-security data engineering—such as the tactical frameworks utilized by **Palantir and NVIDIA** for sovereign, open-weight model deployments—this project is designed to put total data control back into the hands of *everyone*. We have stripped away the complex server setups, configuration overhead, and data-privacy anxieties to deliver a fully operational AI workshop contained inside **one single portable file**.
 
-Whether you are building high-performance web applications from a desktop setup, engineering on the move using an **iPad or iPhone** via tools like *Textastic* and *Working Copy*, or auditing data inside a locked-down, high-security facility, **Sovereign-Harness-SPA** empowers you to command AI models exactly how you see fit. 🏛️💼
+### 👥 One File, Two Distinct Experiences
+* **🛠️ Tactical Dev Mode:** Command AI models with context engineering precision. Inject dynamic telemetry loop corrections, trace token-conscious prompt diffs, and orchestrate strict system alignment variables.
+* **🔒 Everyday Privacy Mode:** An ultra-friendly, non-technical dashboard built for normal users who want absolute privacy. Analyze legal documents, spot AI hallucinations, categorize expenses, or safely write private reflections without corporations training models on your personal data.
 
 ---
 
@@ -57,9 +59,14 @@ When handling ultra-sensitive data or proprietary source code, plugging into gen
   * **Qwen1.5 0.5B Chat (~350MB):** Perfect balance of structured markdown parsing and minimal file sizes.
   * **Qwen3 0.6B ONNX (~500MB):** Upgraded logical reasoning matrix.
   * **Llama 3.2 1B Instruct (~900MB):** Deep semantic comprehension for modern processing cores.
+* **📝 Built-In Everyday Privacy Presets:**
+  * 🛡️ **Grounded Fact-Checker Shield:** Paste text or claims to isolate truth values, flag unverified data, and output an explicit visual **Confidence Index [CI]**.
+  * 📝 **Leakage-Free Contract Auditor:** Securely audit liabilities, renewal traps, and fine print without disclosing financial or identity signatures to clouds.
+  * 🔐 **Encrypted-Tab Journal Reflector:** Private mindfulness logging and summarization engine operating entirely inside your device RAM.
+  * 📊 **Zero-Cloud Expense Analyzer:** Mathematically tabulate and group personal expenses safely off-grid.
+* **💾 One-Click Offline Portability:** Click the prominent **Download Private AI Office** button to save the entire application as a single asset. Carry it on a flash drive, save it on your iPad, or launch it on airplanes—it is your permanent offline digital swiss army knife.
 * **🧠 Anti-Hallucination Guardrails:** Built-in Markdown constraints that structurally command the LLM to output a hard **Confidence Index [CI]** and drop execution cleanly rather than guess or invent variables.
 * **⚖️ Token-Conscious Prompt Stager:** A visual workspace differential viewer that tracks text and structural changes across execution frames so you can audit exactly how your adjustments reshape the AI's output.
-* **🚀 Blazing Rapid Deploys:** Ideate, modify, and deploy an entirely private developer environment to production in under 30 minutes.
 
 ---
 
@@ -69,7 +76,7 @@ Getting up and running takes less than a minute. Choose the flow that matches yo
 
 ### Option A: The Instant Web Preview (Easiest)
 1. Point any desktop or mobile browser to the live site: [https://iggym.github.io/sovereign-ai-context-harness/](https://iggym.github.io/sovereign-ai-context-harness/)
-2. Open the **📖 Quick Start Guide** drawer at the top right to explore operational layouts.
+2. Switch the **Choose Your Workspace Experience** selector to match your workflow goals.
 
 ### Option B: Local Cloning & Off-Grid Deployment
 1. **Clone this repository to your device:**
