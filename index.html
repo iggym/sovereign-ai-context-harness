@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sovereign AI Context Harness & Diff Stager</title>
+    <!-- Include ONNX Runtime Web and Transformers.js libraries via CDN -->
     <script type="module">
         import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
         window.transformers = { pipeline, env };
@@ -121,7 +122,7 @@
             flex-direction: column;
             gap: 4px;
             flex: 1;
-            min-width: 150px;
+            min-width: 200px;
         }
 
         label { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
@@ -224,13 +225,14 @@
 <body>
 
     <header>
-        <h1>🛡️ Sovereign Context Harness <span class="badge">v1.1.0</span></h1>
+        <h1>🛡️ Sovereign Context Harness <span class="badge">v1.2.0</span></h1>
         <div style="display: flex; gap: 8px; align-items: center;">
             <button class="secondary info-btn" onclick="toggleHelpDrawer()">📖 Quick Start Guide</button>
             <span class="badge" id="runtime-badge">Local/Air-Gapped Mode</span>
         </div>
     </header>
 
+    <!-- INTERACTIVE DOCUMENTATION DRAWER -->
     <div id="help-drawer" class="help-drawer">
         <h2 style="color: var(--info); margin-bottom: 12px;">💡 How to use the Sovereign AI Context Engine</h2>
         <div class="help-grid">
@@ -239,7 +241,7 @@
                 <p>Choose your execution boundary:</p>
                 <ul>
                     <li><strong>Ollama (Local):</strong> Uses a daemon on port <code>11434</code>. Highly efficient offline computing.</li>
-                    <li><strong>ONNX WebAssembly (Offline WASM):</strong> Loads a model directly into browser tab cache. Once cached, **runs completely without internet connection** directly on your CPU.</li>
+                    <li><strong>ONNX WebAssembly (Offline WASM):</strong> Loads a model directly into browser tab cache. Once cached, **runs completely without internet connection** directly on your CPU. Choose sizes from 124M up to 1B!</li>
                     <li><strong>Cloudflare Workers:</strong> Offloads computing securely onto edge micro-clusters.</li>
                 </ul>
             </div>
@@ -263,6 +265,7 @@
 
     <div class="grid-layout">
         
+        <!-- LEFT PANEL: CONFIGURATION & CONTEXT PRODUCTION -->
         <div class="panel">
             <h2>⚙️ 1. Engine Configuration</h2>
             <div class="config-row">
@@ -275,8 +278,13 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="model-name">Target Model Block</label>
-                    <input type="text" id="model-name" value="llama3:latest">
+                    <label for="model-selector">Target Model Block</label>
+                    <select id="model-selector">
+                        <!-- Ollama defaults here first -->
+                        <option value="llama3:latest">llama3:latest (Default Local)</option>
+                        <option value="phi3:latest">phi3:latest</option>
+                        <option value="qwen2.5:0.5b">qwen2.5:0.5b</option>
+                    </select>
                 </div>
             </div>
 
@@ -310,6 +318,7 @@
             </div>
         </div>
 
+        <!-- RIGHT PANEL: FEEDBACK LOOPS, EVALS & STAGED DIFFS -->
         <div class="panel">
             <h2>📋 3. Sovereign Runtime Output</h2>
             <div class="form-group">
@@ -331,10 +340,12 @@
 
             <label>Active Local Telemetry Bank (Dynamic Few-Shot Memory)</label>
             <div class="log-container" id="telemetry-log">
-                </div>
+                <!-- Injected traces sit here -->
+            </div>
         </div>
     </div>
 
+    <!-- BOTTOM ROW: REAL-TIME TOKENS DIFF ENGINE -->
     <div class="panel" style="margin-top: 16px;">
         <h2>⚖️ 5. Token-Conscious Prompt Stager (Output Shift Tracking)</h2>
         <div id="diff-view" class="diff-container">
@@ -351,14 +362,35 @@
     </div>
 
     <script>
-        const systemHarnessTemplate = `# SOVEREIGN AI CONTEXT HARNESS (V1.0.0)\n## PURPOSE: ANTI-HALLUCINATION & STRICT BOUNDARY ENFORCEMENT\n\n1. CORE OPERATIONAL MANDATES\n- Source Restraints: You may ONLY generate responses based explicitly on data provided in user query isolation or active telemetry.\n- Missing Information Protocol: If unknown, output '[ERROR: SOURCE_MISSING] Context lacks explicit data.' Do not guess.\n- Confident Index: Prepend every computational delivery block with a strict accuracy reading -> [CI: 0.0 to 1.0]\n\n2. RUNTIME CONSTRAINTS\n- Frame executions: Break outputs down into distinct sequential verification frames.\n- Arithmetic: Draw markdown tables comparing items raw before final mathematical returns.`;
+        const systemHarnessTemplate = `# SOVEREIGN AI CONTEXT HARNESS (V1.2.0)\n## PURPOSE: ANTI-HALLUCINATION & STRICT BOUNDARY ENFORCEMENT\n\n1. CORE OPERATIONAL MANDATES\n- Source Restraints: You may ONLY generate responses based explicitly on data provided in user query isolation or active telemetry.\n- Missing Information Protocol: If unknown, output '[ERROR: SOURCE_MISSING] Context lacks explicit data.' Do not guess.\n- Confident Index: Prepend every computational delivery block with a strict accuracy reading -> [CI: 0.0 to 1.0]\n\n2. RUNTIME CONSTRAINTS\n- Frame executions: Break outputs down into distinct sequential verification frames.\n- Arithmetic: Draw markdown tables comparing items raw before final mathematical returns.`;
 
         let telemetryTraces = [];
-        let generatorPipeline = null; // Caches the local ONNX/WASM text-generation pipeline instance
+        let generatorPipeline = null; 
+        let cachedModelName = "";
+
+        const modelOptions = {
+            ollama: [
+                { value: 'llama3:latest', label: 'llama3:latest (Default Local)' },
+                { value: 'phi3:latest', label: 'phi3:latest' },
+                { value: 'qwen2.5:0.5b', label: 'qwen2.5:0.5b' }
+            ],
+            wasm: [
+                { value: 'Xenova/LaMini-GPT-124M', label: 'LaMini-GPT-124M (~250MB) - Ultra-Fast Mobile CPU' },
+                { value: 'Xenova/gpt2', label: 'GPT-2 Base 124M (~240MB) - Stable Legacy Token Predictor' },
+                { value: 'Xenova/Qwen1.5-0.5B-Chat', label: 'Qwen1.5 0.5B Chat (~350MB) - Optimal Layout Match' },
+                { value: 'onnx-community/Qwen3-0.6B-ONNX', label: 'Qwen3 0.6B ONNX (~500MB) - Enhanced Logic' },
+                { value: 'onnx-community/Llama-3.2-1B-Instruct-ONNX', label: 'Llama 3.2 1B Instruct (~900MB) - High Reasoning' }
+            ],
+            cloudflare: [
+                { value: '@cf/meta/llama-3-8b-instruct', label: 'Llama 3 8B Instruct (Edge Stack)' },
+                { value: '@cf/qwen/qwen1.5-0.5b-chat', label: 'Qwen 1.5 0.5B Chat (Edge Stack)' }
+            ]
+        };
 
         window.onload = function() {
             document.getElementById('system-harness').value = systemHarnessTemplate;
             renderTelemetry();
+            toggleEndpointView(); 
         };
 
         function toggleHelpDrawer() {
@@ -369,22 +401,28 @@
         function toggleEndpointView() {
             const type = document.getElementById('endpoint-type').value;
             const cfRow = document.getElementById('cf-credentials');
-            const modelInput = document.getElementById('model-name');
+            const selector = document.getElementById('model-selector');
             const badge = document.getElementById('runtime-badge');
+
+            // Re-populate the selection dropdown based on selected target architecture
+            selector.innerHTML = '';
+            modelOptions[type].forEach(opt => {
+                const el = document.createElement('option');
+                el.value = opt.value;
+                el.innerText = opt.label;
+                selector.appendChild(el);
+            });
 
             if (type === 'cloudflare') {
                 cfRow.style.display = 'flex';
-                modelInput.value = '@cf/meta/llama-3-8b-instruct';
                 badge.innerText = "Sovereign Edge Mode";
                 badge.style.color = "#ff8700";
             } else if (type === 'wasm') {
                 cfRow.style.display = 'none';
-                modelInput.value = 'Xenova/Qwen1.5-0.5B-Chat'; // Highly optimized lightweight model perfect for browser WASM CPU execution
                 badge.innerText = "Pure Offline WASM Mode";
                 badge.style.color = "#a371f7";
             } else {
                 cfRow.style.display = 'none';
-                modelInput.value = 'llama3:latest';
                 badge.innerText = "Local/Air-Gapped Mode";
                 badge.style.color = "#58a6ff";
             }
@@ -399,7 +437,7 @@
                     traceBlock += `\n### [TRACE-ID: 00${i+1}]\n- Timestamp: ${t.timestamp}\n- User Directive: "${t.correction}"\n- Resolution Rule: Strictly abide by this specific structural adjustment.\n`;
                 });
             }
-            const queryIsolation = `\n\n\n[USER_QUERY_START]\n${document.getElementById('user-query').value}\n[USER_QUERY_END]\n`;
+            const queryIsolation = `\n\n<!-- START SOVEREIGN ISOLATION ZONE -->\n[USER_QUERY_START]\n${document.getElementById('user-query').value}\n[USER_QUERY_END]\n<!-- END SOVEREIGN ISOLATION ZONE -->`;
             return systemHarnessTemplate + traceBlock + queryIsolation;
         }
 
@@ -456,7 +494,7 @@
 
         async function executeInference() {
             const endpointType = document.getElementById('endpoint-type').value;
-            const modelName = document.getElementById('model-name').value;
+            const modelName = document.getElementById('model-selector').value;
             const fullPayload = generateFullPayload();
             const outputView = document.getElementById('output-view');
 
@@ -467,24 +505,24 @@
 
             try {
                 if (endpointType === 'wasm') {
-                    // ONNX Runtime Web via WebAssembly Engine implementation
                     if (!window.transformers) {
                         throw new Error("ONNX Runtime dependencies failed to mount inside browser scope.");
                     }
                     
-                    outputView.value = "Compiling WASM thread allocations... Loading model weights into tab cache (First run may take a few moments)...\\n";
+                    outputView.value = `Compiling WASM thread allocations... Loading ${modelName} weights into tab cache (First run may take a few moments)...\\n`;
                     
-                    // Initialize the transformers instance if not already cached in window scope
-                    if (!generatorPipeline) {
+                    // Re-initialize only if the user changed the target model footprint selection
+                    if (!generatorPipeline || cachedModelName !== modelName) {
                         window.transformers.env.allowLocalModels = false;
                         generatorPipeline = await window.transformers.pipeline('text-generation', modelName);
+                        cachedModelName = modelName;
                     }
 
                     outputView.value = "Model weights mounted into browser RAM. Computing token values on CPU via WebAssembly...\\n";
                     
                     const output = await generatorPipeline(fullPayload, {
                         max_new_tokens: 250,
-                        temperature: 0.0, // Hard-enforce zero temperature to enforce absolute anchor precision
+                        temperature: 0.0, 
                         return_full_text: false
                     });
 
